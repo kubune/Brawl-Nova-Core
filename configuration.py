@@ -1,5 +1,4 @@
 status = "Made by kubune"
-status_url = "https://youtube.com/@kubune."
 
 
 token = ""

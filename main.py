@@ -2,41 +2,32 @@ import nextcord
 from nextcord.ext import commands
 from colorama import Fore as set_color
 from configuration import *
+intents = nextcord.Intents.default()
+intents.members = True
+intents.message_content = True
 
-class Nova(commands.Bot):
-    def __init__(self):
-        super().__init__(
-            command_prefix="nova!",
-            intents=nextcord.Intents.default(),
-        )
-        self.initial_extentions = [
+bot = commands.Bot(command_prefix="nova!",
+            intents=intents
+)
+initial_extentions = [
             "misc.hello"
-        ]
-    cogs = "cogs."
-     
-    async def on_ready(self):
-        print(set_color.GREEN + f'{self.user} connected!' + set_color.RESET)
-        await self.change_presence(activity=nextcord.Streaming(
-    name=f"{status}", url=f"{status_url}"))
-        print(set_color.YELLOW + f"Set status to: \"{status}\" with URL: \"{status_url}\"" + set_color.RESET)
-        print(set_color.CYAN + "Trying to synchronize coommands..." + set_color.RESET)
-        try:
-            synced = await bot.tree.sync()
-            print(set_color.CYAN + f"Synced {len(synced)} slash command(s)" + set_color.RESET)
-        except Exception as Error:
-            print(set_color.RED + "An error occured while trying to synchronize commands..." + set_color.RESET)
-            print(Error)
-        print(set_color.GREEN + 'Nova has started successfully!' + set_color.RESET)
+            ]
 
-    async def setup_hook(self):
-        for ext in self.initial_extentions:
-            try:
-                await self.load_extension(self.cogs + ext)
-                print(set_color.GREEN + f'Loaded command: {ext}' + set_color.RESET)
-            except Exception as error:
-                print(error)
+cogs = "cogs."
+    
+@bot.event
+async def on_ready():
+    print(set_color.GREEN + f'{bot.user} connected!' + set_color.RESET)
+    game = nextcord.Game(name=status)
+    await bot.change_presence(status=nextcord.Status.online, activity=game)
+    print(set_color.YELLOW + f"Set status to: \"{status}\"" + set_color.RESET)
+    print(set_color.GREEN + 'Nova has started successfully!' + set_color.RESET)
 
 
-
-bot = Nova()
+for ext in initial_extentions:
+    try:
+        bot.load_extension(cogs + ext)
+        print(set_color.LIGHTYELLOW_EX + f'Loaded command: {ext}' + set_color.RESET)
+    except Exception as error:
+        print(error)
 bot.run(token)
